@@ -6,7 +6,7 @@
     const _CODE = 'true';
 
     // thiet lap host
-    define('_WEB_HOST','http://' .$_SERVER['HTTP_HOST']. '/baitapcuaNhat/PHP%20Learn');
+    define('_WEB_HOST','http://' .$_SERVER['HTTP_HOST']. '/User-manager');
     define('_WEB_HOST_TEMPLATES',_WEB_HOST.'/templates');
 
     // thiet lap path
@@ -15,7 +15,7 @@
 
     // thong tin ket noi file connect
     const _HOST = 'localhost';
-    const _DB = 'quanlynguoidung';
+    const _DB = 'qlnd';
     const _USER = 'root';
     const _PASS = '';
 
