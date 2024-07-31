@@ -1,0 +1,12 @@
+.mg-form{
+    margin: 10px 0px;
+}
+.mg-btn{
+    margin-top: 20px;
+    /* width: 100%; */
+}
+.errors{
+    color: red ;
+    font-size: 90%;
+    font-style: italic;
+}
