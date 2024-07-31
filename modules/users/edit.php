@@ -144,8 +144,7 @@ if(!empty($editUser)){
         }
         ?>
         <form action="" method="post">
-            <?php echo $userId .'idUpdateTest'?>
-            <input type="" name="id" value="<?php echo $userId ?>">
+            <input type="hidden" name="id" value="<?php echo $userId ?>">
                     
             <div class="row">
                 <div class="col">

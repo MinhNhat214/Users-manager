@@ -24,55 +24,65 @@ if (isPost()) {
         $password = $filterAll['password'];
 
         //Truy vấn lấy thông tin users theo email
-        $userQuery = oneRaw("SELECT password, id FROM user WHERE email = '$email' ");
-
+        $userQuery = oneRaw("SELECT password, id, status FROM user WHERE email = '$email' ");
 
         if (!empty($userQuery)) {
             $passwordHash = $userQuery['password'];
             $userId = $userQuery['id'];
-            if (password_verify($password, $passwordHash)) {
-                //Trong bảng loginToken sẽ chứa token làm primary key
-                //Khi người dùng đăng nhập vào hệ thống thì sẽ có 1 Token được sinh ra
-                //và Insert vào bảng loginToken
-                //Khi người dùng đăng xuất thì sẽ xóa token đi
+            $status = $userQuery['status'];
 
-                //Kiểm tra xem tài khoản đã đăng nhập chưa
-                $userLogin = getRows('SELECT * FROM tokenlogin WHERE user_id =' . $userId);
-                if ($userLogin > 0) {
-                    setFlashData('msg', 'Không thể đăng nhập vui lòng thử lại sau.');
-                    setFlashData('msg_type', 'danger');
-                    redirect("?module=auth&action=login");
-                } else {
-                    //Tạo token login
-                    $tokenLogin = sha1(uniqid() . time());
+            // echo '<pre>';
+            // print_r($status);
+            // echo '</pre>';
 
-                    //Insert vào bảng LoginToken
-                    $dataInsert = [
-                        'user_Id' => $userId,
-                        'token' => $tokenLogin,
-                        'create_at' => date('Y-m-d H:i:s')
-                    ];
+            // die();
 
-                    $insertStatus = insert('tokenlogin', $dataInsert);
-
-                    // echo $insertStatus;
-                    // die();
-                    //Nếu Insert thành công
-                    if ($insertStatus) {
-
-                        //Lưu cái loginToken vào session để kiểm tra
-                        //xem người dùng có đang đăng nhập hay không
-                        setSession('tokenlogin', $tokenLogin);
-
-                        redirect('?module=home&action=dashboard');
-                    } else {
-                        setFlashData('msg', 'Không thể đang nhập vui lòng thử lại sau!!');
-                        setFlashData('msg_type', 'danger ');
-                    }
-                }
-            } else {
-                setFlashData('msg', 'Mật khẩu không chính xác');
+            if ($status == 0) {
+                // Tài khoản chưa được kích hoạt
+                setFlashData('msg', 'Vui lòng vào mail để kích hoạt tài khoản');
                 setFlashData('msg_type', 'danger');
+                redirect("?module=auth&action=login");
+            } else {
+                if (password_verify($password, $passwordHash)) {
+
+                    //Kiểm tra xem tài khoản đã đăng nhập chưa
+                    $userLogin = getRows('SELECT * FROM tokenlogin WHERE user_id =' . $userId);
+                    if ($userLogin > 0) {
+                        setFlashData('msg', 'Không thể đăng nhập vui lòng thử lại sau.');
+                        setFlashData('msg_type', 'danger');
+                        redirect("?module=auth&action=login");
+                    } else {
+                        //Tạo token login
+                        $tokenLogin = sha1(uniqid() . time());
+
+                        //Insert vào bảng LoginToken
+                        $dataInsert = [
+                            'user_Id' => $userId,
+                            'token' => $tokenLogin,
+                            'create_at' => date('Y-m-d H:i:s')
+                        ];
+
+                        $insertStatus = insert('tokenlogin', $dataInsert);
+
+                        // echo $insertStatus;
+                        // die();
+                        //Nếu Insert thành công
+                        if ($insertStatus) {
+
+                            //Lưu cái loginToken vào session để kiểm tra
+                            //xem người dùng có đang đăng nhập hay không
+                            setSession('tokenlogin', $tokenLogin);
+
+                            redirect('?module=home&action=dashboard');
+                        } else {
+                            setFlashData('msg', 'Không thể đang nhập vui lòng thử lại sau!!');
+                            setFlashData('msg_type', 'danger ');
+                        }
+                    }
+                } else {
+                    setFlashData('msg', 'Mật khẩu không chính xác');
+                    setFlashData('msg_type', 'danger');
+                }
             }
         } else {
             setFlashData('msg', 'Email chưa được đăng ký!!');
@@ -86,7 +96,6 @@ if (isPost()) {
 }
 $msg = getFlashData('msg');
 $msg_type = getFlashData('msg_type');
-
 
 
 ?>

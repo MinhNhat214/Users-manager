@@ -11,6 +11,7 @@
     if(!empty($token)){
         $tokenQuery = oneRaw("SELECT id FROM user WHERE activeToken = '$token'");
         if(!empty($tokenQuery)){
+
             $userId = $tokenQuery['id'];
             $dataUpdate = [
                 'status' => 1,
